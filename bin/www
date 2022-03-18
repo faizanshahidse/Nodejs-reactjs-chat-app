@@ -4,16 +4,30 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('nodejs-reactjs-chat-app:server');
-var http = require('http');
+require('dotenv/config');
+const app = require('../app');
+const debug = require('debug')('nodejs-reactjs-chat-app:server');
+const http = require('http');
+const connection = require('../config/db');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+
+const db = connection();
+
+/**
+ * Mongo Database Connection
+ */
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function () {
+  console.log(
+    `..........Database Connected Successfully on PORT ${port}.......`,
+  );
+});
 
 /**
  * Create HTTP server.
@@ -58,9 +72,7 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -83,8 +95,6 @@ function onError(error) {
 
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
+  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
