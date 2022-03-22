@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import socketClient from 'socket.io-client';
+import jwt from 'jsonwebtoken';
 
 const Chat = () => {
   const [chat, setChat] = useState({

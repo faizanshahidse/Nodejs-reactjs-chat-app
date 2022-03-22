@@ -10,17 +10,17 @@ const indexRouter = require('./routes/index');
 const { localStrategy } = require('./middlewares/local.strategy');
 const errorHandler = require('./middlewares/errorHandler');
 
-const whitelist = ['http://localhost:3000'];
+// const whitelist = ['http://localhost:3000'];
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-};
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+// };
 
 const app = express();
 
@@ -37,7 +37,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api', cors(corsOptions), indexRouter);
+app.use('/api', indexRouter);
 
 app.use((req, res, next) => {
   res.json({ message: 'Connected' });

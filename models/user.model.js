@@ -22,8 +22,8 @@ schema.methods.validatePassword = async function (password) {
   return isMatch;
 };
 
-schema.methods.generateJWT = async function () {
-  return jwt.sign({ email: this.email }, process.env.JWT_Secret, {
+schema.methods.generateJWT = async function (id) {
+  return jwt.sign({ email: this.email, id }, process.env.JWT_Secret, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
