@@ -1,13 +1,11 @@
-import Chat from './pages/Chat';
-import Login from './pages/Login';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import Routes from './routes';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path='/login' element={<Login />} />
-      </Routes>
+      <Routes />
     </Router>
   );
 }
