@@ -1,13 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-const base = '/api';
+import axios from '../config/axios';
 
 export const create = createAsyncThunk(
   '/chat/create',
   async (chat, thunkAPI) => {
     try {
-      const response = await axios.post(`${base}/chat/create`, chat);
+      const response = await axios.post('/chat/create', chat);
 
       axios.defaults.headers.common = {
         Authorization: `bearer ${response.data.token}`,
