@@ -16,7 +16,7 @@ const login = asyncHandler(async (req, res, next) => {
 
       const token = await user.generateJWT();
 
-      res.status(201).json({ message: messages.default.success, data: token });
+      res.status(201).json({ message: messages.default.success, token });
     });
   })(req, res, next);
 });

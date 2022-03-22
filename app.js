@@ -8,6 +8,7 @@ const passport = require('passport');
 
 const indexRouter = require('./routes/index');
 const { localStrategy } = require('./middlewares/local.strategy');
+const errorHandler = require('./middlewares/errorHandler');
 
 const whitelist = ['http://localhost:3000'];
 
@@ -57,5 +58,8 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+// error handler middleware
+app.use(errorHandler);
 
 module.exports = app;
