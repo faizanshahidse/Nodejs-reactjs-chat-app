@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '../config/axios';
 
-export const create = createAsyncThunk(
+export const Create = createAsyncThunk(
   '/chat/create',
   async (chat, thunkAPI) => {
     try {
@@ -47,6 +47,7 @@ const chat = createSlice({
   name: 'chat',
   initialState: {
     list: [],
+    newChat: {},
     err: '',
     loading: false,
     done: false,
@@ -62,6 +63,20 @@ const chat = createSlice({
       state.list = action.payload.data;
     },
     [GetList.rejected]: (state, action) => {
+      state.loading = false;
+      state.err = action.payload.err;
+    },
+
+    /*......... Create .................*/
+    [Create.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [Create.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.done = true;
+      state.newChat = action.payload.data;
+    },
+    [Create.rejected]: (state, action) => {
       state.loading = false;
       state.err = action.payload.err;
     },

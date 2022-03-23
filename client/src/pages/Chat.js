@@ -1,21 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import socketClient from 'socket.io-client';
+import { io } from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { GetAllUsers } from '../features/userSlice';
-import { create, GetList } from '../features/chatSlice';
+import { Create, GetList } from '../features/chatSlice';
 import ChatBoard from '../components/chatBoard';
-// import jwt from 'jsonwebtoken';
+import { useJwtDecode } from '../hooks/useJwtDecode';
 
 const Chat = () => {
+  const userId = useJwtDecode();
+
   const [chat, setChat] = useState({
-    userId: '',
+    receiver: '',
     text: '',
   });
 
+  // useEffect(() => {
+  //   console.log(chat);
+  //   debugger;
+  // }, [chat]);
+
+  const [chatList, setChatList] = useState([]);
+
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.user);
-  const { list } = useSelector((state) => state.chat);
+  const { list, newChat } = useSelector((state) => state.chat);
 
   const userList = () => {
     dispatch(GetAllUsers());
@@ -32,7 +41,7 @@ const Chat = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(create(chat));
+    dispatch(Create(chat));
   };
 
   useEffect(() => {
@@ -40,24 +49,37 @@ const Chat = () => {
 
     userList();
 
-    const socket = socketClient(SERVER);
+    const socket = io(SERVER);
 
-    socket.on('connection', () => {
+    socket.on('connect', () => {
       console.log('I am connected with backend............');
     });
 
-    socket.on('message', (data) => {
-      console.log('Message Event............', data);
+    socket.on(userId, (data) => {
+      setChatList((prev) => [...prev, { ...data }]);
     });
+
+    // CLEAN UP THE EFFECT
+    return () => socket.disconnect();
   }, []);
 
   useEffect(() => {
-    if (users?.length) setChat((prev) => ({ ...prev, userId: users[0]._id }));
+    if (users?.length) setChat((prev) => ({ ...prev, receiver: users[0]._id }));
   }, [users?.length]);
 
   useEffect(() => {
-    GetChatList(chat?.userId);
-  }, [chat?.userId]);
+    GetChatList(chat?.receiver);
+  }, [chat?.receiver]);
+
+  useEffect(() => {
+    if (list?.length) setChatList((prev) => [...prev, ...list]);
+  }, [list?.length]);
+
+  useEffect(() => {
+    console.log(newChat);
+
+    if (newChat) setChatList((prev) => [...prev, { ...newChat }]);
+  }, [newChat]);
 
   return (
     <>
@@ -72,12 +94,14 @@ const Chat = () => {
         <label>
           Select User:
           <select
-            name='userId'
+            name='receiver'
             value={chat.userId}
             onChange={(e) => handleChange(e.target.name, e.target.value)}
           >
             {users.map((obj) => (
-              <option value={obj._id}>{obj.name}</option>
+              <option key={obj._id} value={obj._id}>
+                {obj.name}
+              </option>
             ))}
           </select>
         </label>
@@ -95,7 +119,7 @@ const Chat = () => {
           style={{ width: '100px', marginTop: '20px' }}
         />
       </form>
-      <ChatBoard list={list} />
+      <ChatBoard list={chatList} />
     </>
   );
 };

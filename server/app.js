@@ -8,6 +8,7 @@ const passport = require('passport');
 
 const indexRouter = require('./routes/index');
 const { localStrategy } = require('./middlewares/local.strategy');
+const { jWTStrategy } = require('./middlewares/jwt.strategy');
 const errorHandler = require('./middlewares/errorHandler');
 
 // const whitelist = ['http://localhost:3000'];
@@ -30,6 +31,7 @@ app.set('view engine', 'jade');
 
 app.use(passport.initialize());
 passport.use(localStrategy);
+passport.use(jWTStrategy);
 
 app.use(logger('dev'));
 app.use(express.json());

@@ -25,12 +25,16 @@ const ChatBoard = ({ list }) => {
         borderRadius: '5px',
       }}
     >
-      {list?.map((chat) => (
-        <div>
-          <h3>{chat.userId.name}</h3>
-          <p>{chat.text}</p>
-        </div>
-      ))}
+      {list?.length ? (
+        list?.map((chat) => (
+          <div key={chat?._id}>
+            <h3>{chat?.sender?.name}</h3>
+            <p>{chat.text}</p>
+          </div>
+        ))
+      ) : (
+        <p>No Chat available...</p>
+      )}
     </div>
   );
 };

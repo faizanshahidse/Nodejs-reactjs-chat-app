@@ -43,7 +43,10 @@ const io = socketio(server, {
   },
 });
 
-socketConn(io).then((socket) => app.set('socketio', socket));
+socketConn(io);
+app.set('socketio', io);
+
+// socketConn(io).then((socket) => app.set('socketio', socket));
 
 /**
  * Listen on provided port, on all network interfaces.

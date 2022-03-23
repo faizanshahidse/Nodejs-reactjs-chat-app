@@ -4,38 +4,47 @@ const asyncHandler = require('express-async-handler');
 const messages = require('../config/messages');
 
 class SocketIo {
-  constructor(io) {
+  constructor(io, receiver, sender) {
     this.io = io;
+    this.receiver = receiver;
   }
 
   messageEmit(data) {
-    this.io.emit('message', data);
+    this.io.emit(this.receiver, data);
   }
 }
 
-// module.exports = (io) => {
 const create = asyncHandler(async (req, res) => {
   const {
-    body: { userId, text },
+    body: { receiver, text },
+    user,
   } = req;
 
   const io = req.app.get('socketio');
 
-  console.log(userId, text);
+  console.log('user..............', user.id);
 
-  const newChat = await Chat.create({ userId, text });
+  const newChat = await Chat.create({ receiver, text, sender: user.id });
+  const chat = await Chat.findOne({ _id: newChat._id })
+    .populate('sender')
+    .populate('receiver');
 
-  new SocketIo(io).messageEmit(newChat);
+  new SocketIo(io, receiver).messageEmit(chat);
 
-  return res.json({ message: 'socket success', data: newChat });
+  return res.json({ message: messages.default.success, data: chat });
 });
 
 const getList = asyncHandler(async (req, res) => {
   const {
     params: { id },
+    user,
   } = req;
 
-  const list = await Chat.find({ userId: id }).populate('userId');
+  console.log('user.......................', user.id);
+
+  const list = await Chat.find({ receiver: id, sender: user.id })
+    .populate('sender')
+    .populate('receiver');
 
   return res.json({ message: messages.default.success, data: list });
 });
