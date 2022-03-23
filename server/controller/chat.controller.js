@@ -1,6 +1,7 @@
 const socket = require('../socket/socket');
 const Chat = require('../models/chat.model');
 const asyncHandler = require('express-async-handler');
+const messages = require('../config/messages');
 
 class SocketIo {
   constructor(io) {
@@ -29,6 +30,17 @@ const create = asyncHandler(async (req, res) => {
   return res.json({ message: 'socket success', data: newChat });
 });
 
+const getList = asyncHandler(async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+
+  const list = await Chat.find({ userId: id }).populate('userId');
+
+  return res.json({ message: messages.default.success, data: list });
+});
+
 module.exports = {
   create,
+  getList,
 };

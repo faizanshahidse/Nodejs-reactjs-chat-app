@@ -1,5 +1,11 @@
 import { combineReducers } from '@reduxjs/toolkit';
 
-const rootReducer = combineReducers({});
+import userReducer from './features/userSlice';
+import chatReducer from './features/chatSlice';
+
+const rootReducer = combineReducers({
+  user: userReducer,
+  chat: chatReducer,
+});
 
 export default rootReducer;

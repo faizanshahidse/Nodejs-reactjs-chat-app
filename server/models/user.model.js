@@ -3,11 +3,14 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const schema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  password: { type: String, required: true },
-});
+const schema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    password: { type: String, required: true },
+  },
+  { timestamps: true },
+);
 
 schema.pre('save', async function (next) {
   const hash = await bcrypt.hash(this.password, 12);
@@ -28,6 +31,6 @@ schema.methods.generateJWT = async function (id) {
   });
 };
 
-const User = mongoose.model('user', schema);
+const User = mongoose.model('User', schema);
 
 module.exports = User;
